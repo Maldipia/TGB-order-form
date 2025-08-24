@@ -76,6 +76,11 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
         }
         
+        input.error, select.error, textarea.error {
+            border-color: #e74c3c;
+            background: #ffe5e5;
+        }
+        
         textarea {
             resize: vertical;
             min-height: 80px;
@@ -85,8 +90,9 @@
             font-size: 12px;
             color: #666;
             margin-top: 5px;
-            padding: 5px 10px;
-            background: #f9f9f9;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #fff8dc 0%, #f9f5e9 100%);
+            border-left: 3px solid #d4af37;
             border-radius: 5px;
             display: none;
         }
@@ -94,7 +100,7 @@
         .submit-btn {
             width: 100%;
             padding: 15px;
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -103,10 +109,11 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         
         .submit-btn:hover {
-            background: #b8941f;
+            background: linear-gradient(135deg, #b8941f 0%, #9c7a19 100%);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
@@ -122,18 +129,49 @@
             padding: 20px;
             border-radius: 8px;
             display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .result.success {
-            background: #d4f4dd;
+            background: linear-gradient(135deg, #d4f4dd 0%, #e8f5e9 100%);
             border: 2px solid #27ae60;
             color: #27ae60;
         }
         
+        .result.success h2 {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        
         .result.error {
-            background: #ffe5e5;
+            background: linear-gradient(135deg, #ffe5e5 0%, #ffebee 100%);
             border: 2px solid #e74c3c;
             color: #e74c3c;
+        }
+        
+        .result.error h3 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        
+        .result p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        
+        .result strong {
+            color: #333;
         }
         
         .loading {
@@ -149,7 +187,7 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 0 auto 10px;
         }
         
         @keyframes spin {
@@ -161,6 +199,17 @@
             color: #e74c3c;
         }
         
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
         @media (max-width: 640px) {
             .container {
                 margin: 0;
@@ -170,6 +219,10 @@
             .form-container {
                 padding: 20px;
             }
+            
+            .header h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -177,45 +230,49 @@
     <div class="container">
         <div class="header">
             <h1>THE GOLD BLESSING</h1>
-            <p>Premium Gold Jewelry - Order Form</p>
+            <p>Premium Gold Jewelry - Philippine's Trusted Brand</p>
         </div>
         
         <div class="form-container">
             <form id="tgbOrderForm">
                 <div class="form-group">
-                    <label>Email <span class="required">*</span></label>
+                    <label>Email Address <span class="required">*</span></label>
                     <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                    <span class="error-message" id="email-error">Please enter a valid email address</span>
                 </div>
                 
                 <div class="form-group">
-                    <label>Full Name <span class="required">*</span></label>
+                    <label>Receiver's Full Name <span class="required">*</span></label>
                     <input type="text" id="receiver_name" name="receiver_name" required placeholder="Juan Dela Cruz">
+                    <span class="error-message" id="name-error">Please enter the receiver's full name</span>
                 </div>
                 
                 <div class="form-group">
                     <label>Facebook/Instagram Username</label>
-                    <input type="text" id="fb_ig_name" name="fb_ig_name" placeholder="@username (optional)">
+                    <input type="text" id="fb_ig_name" name="fb_ig_name" placeholder="@yourusername (optional)">
                 </div>
                 
                 <div class="form-group">
-                    <label>Complete Address <span class="required">*</span></label>
-                    <textarea id="full_address" name="full_address" required placeholder="House/Unit Number, Street, Barangay, City, Province"></textarea>
+                    <label>Complete Delivery Address <span class="required">*</span></label>
+                    <textarea id="full_address" name="full_address" required placeholder="House/Unit Number, Street Name, Barangay, City/Municipality, Province"></textarea>
+                    <span class="error-message" id="address-error">Please enter complete address</span>
                 </div>
                 
                 <div class="form-group">
                     <label>Contact Number <span class="required">*</span></label>
-                    <input type="tel" id="contact_number" name="contact_number" required placeholder="09XX-XXX-XXXX" pattern="[0-9]{11}">
+                    <input type="tel" id="contact_number" name="contact_number" required placeholder="09123456789 or +639123456789">
+                    <span class="error-message" id="phone-error">Please enter a valid Philippine mobile number</span>
                 </div>
                 
                 <div class="form-group">
                     <label>Payment Method <span class="required">*</span></label>
                     <select id="payment_method" name="payment_method" required>
                         <option value="">-- Select Payment Method --</option>
-                        <option value="STRAIGHT PAYMENT">Straight Payment</option>
+                        <option value="STRAIGHT PAYMENT">Straight Payment (Bank/GCash)</option>
                         <option value="COD">Cash on Delivery (COD)</option>
                         <option value="COP">Cash on Pickup (COP)</option>
-                        <option value="LAYAWAY">Layaway Plan</option>
-                        <option value="WALK IN">Walk In</option>
+                        <option value="LAYAWAY">Layaway Plan (0% Interest)</option>
+                        <option value="WALK IN">Walk In (Store Visit)</option>
                     </select>
                     <div class="points-info" id="pointsInfo"></div>
                 </div>
@@ -224,27 +281,28 @@
                     <label>Region <span class="required">*</span></label>
                     <select id="region" name="region" required>
                         <option value="">-- Select Region --</option>
-                        <option value="LUZON">Luzon</option>
+                        <option value="LUZON">Luzon (NCR, North & South)</option>
                         <option value="VISAYAS">Visayas</option>
                         <option value="MINDANAO">Mindanao</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label>City <span class="required">*</span></label>
-                    <input type="text" id="city" name="city" required placeholder="Enter your city">
+                    <label>City/Municipality <span class="required">*</span></label>
+                    <input type="text" id="city" name="city" required placeholder="e.g., Makati City, Cebu City, Davao City">
+                    <span class="error-message" id="city-error">Please enter your city or municipality</span>
                 </div>
                 
                 <div class="form-group">
-                    <label>Special Request</label>
-                    <textarea id="special_request" name="special_request" placeholder="Any special instructions or requests? (optional)"></textarea>
+                    <label>Special Instructions or Requests</label>
+                    <textarea id="special_request" name="special_request" placeholder="Any special instructions, preferred delivery time, or specific product requests? (optional)"></textarea>
                 </div>
                 
                 <button type="submit" class="submit-btn" id="submitBtn">SUBMIT ORDER</button>
                 
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p>Processing your order...</p>
+                    <p>Processing your order, please wait...</p>
                 </div>
                 
                 <div class="result" id="result"></div>
@@ -253,27 +311,72 @@
     </div>
     
     <script>
-        // REPLACE THIS WITH YOUR ACTUAL N8N WEBHOOK URL
+        // WEBHOOK URL - MAKE SURE THIS MATCHES YOUR N8N WEBHOOK
         const WEBHOOK_URL = 'https://maldipia.app.n8n.cloud/webhook/tgb-order-ph';
         
-        // Points information
+        // Points and rewards information
         const pointsInfo = {
-            'STRAIGHT PAYMENT': '100 points (GOLD tier) + Monthly Raffle Entry!',
-            'WALK IN': '75 points (SILVER tier)',
-            'COD': '50 points (SILVER tier)',
-            'COP': '50 points (SILVER tier)',
-            'LAYAWAY': '25 points (BRONZE tier)'
+            'STRAIGHT PAYMENT': '✨ Earn 100 points (GOLD tier) + Automatic Monthly Raffle Entry! 🎁',
+            'WALK IN': '✨ Earn 75 points (SILVER tier) + Exclusive In-Store Discounts!',
+            'COD': '✨ Earn 50 points (SILVER tier) + Free Delivery Insurance!',
+            'COP': '✨ Earn 50 points (SILVER tier) + Priority Pickup Service!',
+            'LAYAWAY': '✨ Earn 25 points (BRONZE tier) + 0% Interest for 3 Months!'
         };
         
-        // Update points display when payment method changes
+        // Show points info when payment method changes
         document.getElementById('payment_method').addEventListener('change', function() {
             const info = document.getElementById('pointsInfo');
             if (this.value && pointsInfo[this.value]) {
-                info.textContent = '✨ Earn ' + pointsInfo[this.value];
+                info.innerHTML = pointsInfo[this.value];
                 info.style.display = 'block';
             } else {
                 info.style.display = 'none';
             }
+        });
+        
+        // Phone number formatting
+        document.getElementById('contact_number').addEventListener('input', function(e) {
+            // Remove all non-digit characters except +
+            let value = e.target.value.replace(/[^\d+]/g, '');
+            
+            // Remove error styling if user is typing
+            e.target.classList.remove('error');
+            document.getElementById('phone-error').classList.remove('show');
+            
+            e.target.value = value;
+        });
+        
+        // Validate phone number
+        function validatePhoneNumber(phone) {
+            // Remove all non-digits
+            const digitsOnly = phone.replace(/\D/g, '');
+            
+            // Valid formats:
+            // 09xxxxxxxxx (11 digits starting with 09)
+            // 9xxxxxxxxx (10 digits starting with 9)
+            // 639xxxxxxxxx (12 digits starting with 63)
+            if (digitsOnly.match(/^09\d{9}$/) || 
+                digitsOnly.match(/^9\d{9}$/) || 
+                digitsOnly.match(/^639\d{9}$/)) {
+                return true;
+            }
+            return false;
+        }
+        
+        // Validate email
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        
+        // Clear error styling on input
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorMsg = this.parentElement.querySelector('.error-message');
+                if (errorMsg) {
+                    errorMsg.classList.remove('show');
+                }
+            });
         });
         
         // Form submission
@@ -284,22 +387,65 @@
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
             
+            // Clear previous results
+            result.style.display = 'none';
+            result.className = 'result';
+            
+            // Validate form
+            let isValid = true;
+            
+            // Validate email
+            const emailField = document.getElementById('email');
+            if (!validateEmail(emailField.value)) {
+                emailField.classList.add('error');
+                document.getElementById('email-error').classList.add('show');
+                isValid = false;
+            }
+            
+            // Validate phone
+            const phoneField = document.getElementById('contact_number');
+            if (!validatePhoneNumber(phoneField.value)) {
+                phoneField.classList.add('error');
+                document.getElementById('phone-error').classList.add('show');
+                isValid = false;
+            }
+            
+            // Check required fields
+            const requiredFields = ['receiver_name', 'full_address', 'payment_method', 'region', 'city'];
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    const errorMsg = field.parentElement.querySelector('.error-message');
+                    if (errorMsg) {
+                        errorMsg.classList.add('show');
+                    }
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                result.className = 'result error';
+                result.innerHTML = '<h3>⚠️ Please check your form</h3><p>Some required fields are missing or invalid.</p>';
+                result.style.display = 'block';
+                return;
+            }
+            
             // Disable submit button and show loading
             submitBtn.disabled = true;
             loading.style.display = 'block';
-            result.style.display = 'none';
             
             // Collect form data
             const formData = {
-                email: document.getElementById('email').value,
-                receiver_name: document.getElementById('receiver_name').value,
-                fb_ig_name: document.getElementById('fb_ig_name').value || '',
-                full_address: document.getElementById('full_address').value,
-                contact_number: document.getElementById('contact_number').value,
+                email: emailField.value.trim(),
+                receiver_name: document.getElementById('receiver_name').value.trim(),
+                fb_ig_name: document.getElementById('fb_ig_name').value.trim() || '',
+                full_address: document.getElementById('full_address').value.trim(),
+                contact_number: phoneField.value.trim(),
                 payment_method: document.getElementById('payment_method').value,
                 region: document.getElementById('region').value,
-                city: document.getElementById('city').value,
-                special_request: document.getElementById('special_request').value || ''
+                city: document.getElementById('city').value.trim(),
+                special_request: document.getElementById('special_request').value.trim() || ''
             };
             
             try {
@@ -311,36 +457,54 @@
                     body: JSON.stringify(formData)
                 });
                 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+                    // If response is not JSON, treat as success with basic response
+                    if (response.ok) {
+                        data = { success: true, data: { orderId: 'TGB-' + Date.now() } };
+                    } else {
+                        throw new Error('Server error. Please try again.');
+                    }
+                }
                 
-                if (data.success) {
+                if (response.ok && (data.success !== false)) {
                     result.className = 'result success';
+                    const orderData = data.data || {};
                     result.innerHTML = `
-                        <h2>✅ Order Confirmed!</h2>
-                        <p><strong>Order ID:</strong> ${data.data.orderId}</p>
-                        <p><strong>VIP ID:</strong> ${data.data.vipId}</p>
-                        <p><strong>Points Earned:</strong> ${data.data.pointsEarned} points</p>
-                        <p><strong>Tier Status:</strong> ${data.data.customerTier}</p>
-                        ${data.data.raffleEntry ? '<p>🎉 <strong>You have 1 raffle entry for this month!</strong></p>' : ''}
-                        <p>📧 Please check your email for confirmation and next steps.</p>
+                        <h2>✅ Order Successfully Submitted!</h2>
+                        <p><strong>Order ID:</strong> ${orderData.orderId || 'TGB-' + Date.now()}</p>
+                        ${orderData.vipId ? `<p><strong>VIP ID:</strong> ${orderData.vipId}</p>` : ''}
+                        ${orderData.pointsEarned ? `<p><strong>Points Earned:</strong> ${orderData.pointsEarned} points</p>` : ''}
+                        ${orderData.customerTier ? `<p><strong>Tier Status:</strong> ${orderData.customerTier}</p>` : ''}
+                        ${orderData.raffleEntry > 0 ? '<p>🎉 <strong>You have been entered into this month\'s raffle!</strong></p>' : ''}
+                        <p>📧 Please check your email for confirmation and payment instructions.</p>
+                        <p>Thank you for choosing THE GOLD BLESSING!</p>
                     `;
                     
-                    // Reset form
+                    // Reset form after successful submission
                     this.reset();
                     document.getElementById('pointsInfo').style.display = 'none';
+                    
+                    // Scroll to result
+                    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
-                    throw new Error(data.message || 'Order submission failed');
+                    throw new Error(data.message || data.error || 'Order submission failed. Please try again.');
                 }
             } catch (error) {
+                console.error('Submission error:', error);
                 result.className = 'result error';
                 result.innerHTML = `
-                    <h3>❌ Error</h3>
+                    <h3>❌ Submission Error</h3>
                     <p>${error.message}</p>
-                    <p>Please try again or contact support@thegoldblessing.com</p>
+                    <p>Please try again or contact support at:</p>
+                    <p>📧 support@thegoldblessing.com</p>
+                    <p>📱 Facebook: THE GOLD BLESSING</p>
                 `;
+                result.style.display = 'block';
             } finally {
                 loading.style.display = 'none';
-                result.style.display = 'block';
                 submitBtn.disabled = false;
             }
         });
